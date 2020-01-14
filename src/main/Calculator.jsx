@@ -36,7 +36,54 @@ export default class Calculator extends Component{
 
     }
     setOperation(operation){
-        console.log(operation)
+
+        if(this.state.current === 0){
+            //entra no segundo valor do array, limpando o display
+            this.setState({operation, current: 1, clearDisplay: true})
+        }else{
+            //processamento do resultado
+            const equals = operation === '='
+            //resolve a operação atual e e ja seta a proxima operação
+            const currentOperation = this.state.operation 
+
+            const values = [...this.state.values]
+
+            try{
+                //realiza as operações usando o eval
+            values[0] = eval(`${values[0]} ${currentOperation} ${values[1]}`)
+            }catch(e){
+                //se der erro pega o valor atual e coloca no indice 0
+                values[0] = this.state.values[0]
+            }
+            
+            //o resultado fica no indice 0 e o indice 1 é zerado
+            values[1] = 0
+
+            this.setState({
+                
+                //o resulatdo da operação é armazenado para que ele seja exibido
+                displayValue: values[0],
+                
+                /*Se a operação for um equals ela é dada como concluida, 
+                senão a proxima operação passa a ser a atual*/
+                operation:equals ? null : operation,
+                
+                /**Se o usuario clicar no equals ele continua mexendo no indice zero
+                 * senão passar a mexer no indice 1
+                 */
+                current: equals ? 0 : 1,
+                
+                //Se for diferente de equals ele limpa o display
+                clearDisplay: !equals,
+
+                //passa os valores
+                values
+
+            })
+
+
+
+        }
 
     }
     addDigit(n){
